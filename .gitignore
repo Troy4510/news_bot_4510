@@ -5,4 +5,5 @@ lib
 lib64
 config.ini
 news_base.db
-pyenv.cfg
+*.cfg
+.gitignore
