@@ -13,16 +13,10 @@ def check_base(db_name):
     time TEXT,
     name TEXT,
     link TEXT,
-    public BOOL
+    readed TEXT
     )
     ''')
     connection.commit()
-    
-    #cursor.execute('INSERT INTO tNews(date,name,link)VALUES ("test_date", "test_name", "test_link")')
-    #connection.commit()
-    #cursor.execute('DELETE FROM tNews WHERE id > 1') 
-    #connection.commit()
-    
     connection.close()
     print('[sql.check_base] OK')
     
@@ -33,10 +27,10 @@ def add_record(db_name, time, name, link):
     if not in_base:
         print('[sql.add_record] not in base, added')
         date = datetime.datetime.now().strftime('%d.%m.%y')
-        query = 'insert into tnews(date,time,name,link) values (?,?,?,?)'
+        query = 'insert into tnews(date,time,name,link,readed) values (?,?,?,?,?)'
         connection = sqlite3.connect(db_name)
         cursor = connection.cursor()
-        cursor.execute(query, (date,time,name,link))
+        cursor.execute(query, (date,time,name,link,'no'))
         connection.commit()
         connection.close()
     else:
@@ -56,8 +50,23 @@ def read_today_records(db_name):
     cursor.execute(query)
     records = cursor.fetchall()
     connection.close()
+    print(f'[sql.read_today_records] readed: {len(records)}')
     return records
     
+
+def read_unreaded_records(db_name):
+    print('[sql.read_unreaded_records] >')
+    query = "select * from tnews where (readed = 'no')"
+    connection = sqlite3.connect(db_name)
+    cursor = connection.cursor()
+    cursor.execute(query)
+    records = cursor.fetchall()
+    query = "update tnews set readed = 'yes' where readed = 'no'"
+    cursor.execute(query)
+    connection.commit()
+    connection.close()
+    return records
+
 
 def check_record(db_name, link):
     query = f'select * from tnews where (link = "{link}")'

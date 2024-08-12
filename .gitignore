@@ -3,7 +3,6 @@ bin
 include
 lib
 lib64
-config.ini
 news_base.db
-*.cfg
+pyvenv.cfg
 .gitignore
